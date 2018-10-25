@@ -4,23 +4,34 @@
 Card payment method by [Victoriabank.md](http://www.victoriabank.md/) (Moldova) for miniShop2
 
 * Создать приватный ключ с помощью OpenSSL
+
 ```openssl genrsa -f4 -out key.pem 2048```
 
-* Этот ключ, после установки модуля, поместить в папку ```components/minishop2/custom/payment/lib/victoriabankmd/```
+* Этот ключ, после установки модуля, поместить в папку
+ ```components/minishop2/custom/payment/lib/victoriabankmd/```
 
 **Там же должен уже лежить публичный ключ от банка victoria_pub.pem**
 
 * Создать публичный ключ
+
 ```openssl rsa -pubout -in key.pem -out pubkey.pem```
 
 Этот ключ необходимо отправить админу техотдела банка, для настройки терминала
+
 Данные, которые даёт банк: 
+
 *Terminal ID: xxxxxxxx - 8 цифр*
+
 *Card Acceptor ID: xxxxxxxxxxxxxxx - 15 цифр*
 
 **Банк затребует URL для постирования ответов:**
+
 Указать
+
 ```https://site.md/assets/components/minishop2/payment/victoriabankmd.php```
+
+------------
+
 
 После проведения тестовых платежей необходимо сообщить в техотедл банка данные тестов.
 В предоставляемой банком документации есть необходимые данные.
@@ -30,3 +41,18 @@ Card payment method by [Victoriabank.md](http://www.victoriabank.md/) (Moldova) 
 * Оплата - подтверждение - возврат средств
 
 Так как в minishop2 не предусмотрено использование возвра средств, то проводится только первый тест. Остальные моменты необходимо решать в индивидуальном порядке с банком.
+
+###Системные настройки
+
+Системные настройки, появляются после оплаты в разделе **Системные настройки - minishop2 - Платежи **
+
+                    
+Название |  Описание | Ключ  | Значение |  
+------------- | ------------- | ------------ | ------------ |
+Валюта платежа | Трехбуквыннй код валюты (MDL, USD, EUR)  | ms2_payment_vcbmd_currency | MDL 
+Адрес для запросов | Адрес для отправки запросов на удалённый сервис Victoriabank | ms2_payment_vcbmd_url| https://egateway.victoriabank.md/cgi-bin/cgi_link
+ID терминала | Выдается банком |ms2_payment_vcbmd_terminal_id| -
+MERCHANT| Выдается банком |ms2_payment_vcbmd_merchant_id| -
+Имя организации продавца||ms2_payment_vcbmd_merch_name| - 
+Язык формы оплаты| На каком языке будет форма ввода данных для оплаты (на стороне банка). Возможны варианты ru/ro/en| ms2_payment_vcbmd_language |ru
+
