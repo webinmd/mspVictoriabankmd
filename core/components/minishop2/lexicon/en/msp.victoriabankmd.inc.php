@@ -20,3 +20,6 @@ $_lang['setting_ms2_payment_vcbmd_language_desc'] = 'Victoriabank pay form langu
 
 $_lang['setting_ms2_payment_vcbmd_success_id'] = 'Victoriabank: Success page id';
 $_lang['setting_ms2_payment_vcbmd_success_id_desc'] = 'Redirect user after success payment';
+
+$_lang['setting_ms2_payment_vcbmd_merch_gmt'] = 'Victoriabank: GMT time';
+$_lang['setting_ms2_payment_vcbmd_merch_gmt_desc'] = 'Enter the time difference between the server and your country.';

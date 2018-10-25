@@ -20,3 +20,6 @@ $_lang['setting_ms2_payment_vcbmd_language_desc'] = 'Укажите код яз�
 
 $_lang['setting_ms2_payment_vcbmd_success_id'] = 'Victoriabank: Страница успешной оплаты - id';
 $_lang['setting_ms2_payment_vcbmd_success_id_desc'] = 'Пользователь будет отправлен на эту страницу после завершения оплаты.';
+
+$_lang['setting_ms2_payment_vcbmd_merch_gmt'] = 'Victoriabank: Разница времени';
+$_lang['setting_ms2_payment_vcbmd_merch_gmt_desc'] = 'Укажите разницу времени между сервером и вашей страной';

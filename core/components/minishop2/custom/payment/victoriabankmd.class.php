@@ -16,17 +16,17 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		$paymentUrl = $siteUrl . substr($assetsUrl, 1) . 'payment/victoriabankmd.php';
 
 		$this->config = array_merge(array(
-			'paymentUrl' => $paymentUrl
-			,'checkoutUrl' => $this->modx->getOption('ms2_payment_vcbmd_url', null, 'https://egateway.victoriabank.md/cgi-bin/cgi_link', true)
-			,'terminal_id' => $this->modx->getOption('ms2_payment_vcbmd_terminal_id')
-			,'merchant_id' => $this->modx->getOption('ms2_payment_vcbmd_merchant_id')
-			,'assets_url' => $assetsUrl
-			,'merch_url' => $this->modx->getOption('site_url')
-			,'merch_name' => $this->modx->getOption('ms2_payment_vcbmd_merch_name', '', true)
-			,'currency' => $this->modx->getOption('ms2_payment_vcbmd_currency', '', true)
-			,'language' => $this->modx->getOption('ms2_payment_vcbmd_language', 'ru', true)
-			,'success_id' => $this->modx->getOption('ms2_payment_vcbmd_success_id', '1', true) 
-			,'email' => $this->modx->getOption('ms2_payment_vcbmd_email', $this->modx->getOption('emailsender'), true)
+			'paymentUrl' 		=> $paymentUrl
+			,'checkoutUrl' 		=> $this->modx->getOption('ms2_payment_vcbmd_url', null, 'https://egateway.victoriabank.md/cgi-bin/cgi_link', true)
+			,'terminal_id' 		=> $this->modx->getOption('ms2_payment_vcbmd_terminal_id')
+			,'merchant_id' 		=> $this->modx->getOption('ms2_payment_vcbmd_merchant_id')
+			,'assets_url' 		=> $assetsUrl
+			,'merch_url' 		=> $this->modx->getOption('site_url')
+			,'merch_name' 		=> $this->modx->getOption('ms2_payment_vcbmd_merch_name', '', true)
+			,'currency' 		=> $this->modx->getOption('ms2_payment_vcbmd_currency', '', true)
+			,'language' 		=> $this->modx->getOption('ms2_payment_vcbmd_language', 'ru', true)
+			,'success_id' 		=> $this->modx->getOption('ms2_payment_vcbmd_success_id', '1', true)
+			,'merch_gmt' 		=> $this->modx->getOption('ms2_payment_vcbmd_merch_gm', '2', true)
 		), $config);
 	}
 
@@ -45,7 +45,6 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		$trtType 		= 0;
 		$sign 			= $this->P_SIGN_ENCRYPT('00000'.$id, $timestamp, $trtType, $amount); 	 
 		$success_url	= $this->modx->makeUrl($this->config['success_id'], '', array('msorder'=>$id), 'full');
-		//$success_url 	= $this->modx->makeUrl($this->config['success_id'],'','',$this->config['protocol']);
 
 		$request = array(
 			 'checkoutUrl' 	=> $this->config['checkoutUrl']
@@ -64,7 +63,7 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 			,'BACKREF'		=> $success_url
 			,'NONCE'		=> '11111111000000011111'
 			,'P_SIGN'		=> $sign
-			,'MERCH_GMT'	=> 2
+			,'MERCH_GMT'	=> $this->config['merch_gmt']	
 			,'LANG'			=> $this->config['language']
 		); 
 
@@ -110,16 +109,16 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 
 		$ch = curl_init(); 
 		$fields = array( 
-			'ORDER' 	=> $params['ORDER'], 
-			'AMOUNT'	=> $params['AMOUNT'],
-			'RRN'		=> $params['RRN'],
-			'INT_REF'	=> $params['INT_REF'],
-			'TRTYPE'	=> 21,
-			'TERMINAL'	=> $params['TERMINAL'],
-			'CURRENCY'	=> $params['CURRENCY'],
-			'TIMESTAMP'	=> $params['TIMESTAMP'],
-			'NONCE'		=> '11111111000000011111',
-			'P_SIGN'	=> $sign
+			 'ORDER' 	=> $params['ORDER'],
+			,'AMOUNT'	=> $params['AMOUNT']
+			,'RRN'		=> $params['RRN']
+			,'INT_REF'	=> $params['INT_REF']
+			,'TRTYPE'	=> 21
+			,'TERMINAL'	=> $params['TERMINAL']
+			,'CURRENCY'	=> $params['CURRENCY']
+			,'TIMESTAMP'	=> $params['TIMESTAMP']
+			,'NONCE'		=> '11111111000000011111'
+			,'P_SIGN'	=> $sign
 		);
 
 		$request = http_build_query($fields);
@@ -143,11 +142,11 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		$RSA_KeyPath = MODX_BASE_PATH.'core/components/minishop2/custom/payment/lib/victoriabankmd/key.pem';
 		$RSA_Key = file_get_contents ($RSA_KeyPath);
 		$Data = array (
-				'ORDER' => $OrderId,
-				'NONCE' => '11111111000000011111',
-				'TIMESTAMP' => $Timestamp,
-				'TRTYPE' => $trtType,
-				'AMOUNT' => $Amount
+				 'ORDER' => $OrderId
+				,'NONCE' => '11111111000000011111'
+				,'TIMESTAMP' => $Timestamp
+				,'TRTYPE' => $trtType
+				,'AMOUNT' => $Amount
 			);
 			
 		if (!$RSA_KeyResource = openssl_get_privatekey ($RSA_Key)){
@@ -184,11 +183,11 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 
 	public function P_SIGN_DECRYPT($P_SIGN, $ACTION, $RC, $RRN, $ORDER, $AMOUNT){
 		$InData = array (
-			'ACTION' => $ACTION,
-			'RC' => $RC,
-			'RRN' => $RRN,
-			'ORDER' => $ORDER ,
-			'AMOUNT' => $AMOUNT
+			 'ACTION' => $ACTION
+			,'RC' => $RC
+			,'RRN' => $RRN
+			,'ORDER' => $ORDER
+			,'AMOUNT' => $AMOUNT
 		);
 
 		foreach($InData as $Id => $Filed) if ($Filed!= '-'  ) : $MAC .= strlen ($Filed).$Filed; else: $MAC .=$Filed; endif;
