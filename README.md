@@ -49,10 +49,10 @@ Card payment method by [Victoriabank.md](http://www.victoriabank.md/) (Moldova) 
                     
 Название |  Описание | Ключ  | Значение |  
 ------------- | ------------- | ------------ | ------------ |
-Валюта платежа | Трехбуквыннй код валюты (MDL, USD, EUR)  | ms2_payment_vcbmd_currency | MDL 
+Валюта платежа | Трехбуквеннй код валюты (MDL, USD, EUR)  | ms2_payment_vcbmd_currency | MDL 
 Адрес для запросов | Адрес для отправки запросов на удалённый сервис Victoriabank | ms2_payment_vcbmd_url| https://egateway.victoriabank.md/cgi-bin/cgi_link
 ID терминала | Выдается банком |ms2_payment_vcbmd_terminal_id| -
 MERCHANT| Выдается банком |ms2_payment_vcbmd_merchant_id| -
 Имя организации продавца||ms2_payment_vcbmd_merch_name| - 
 Язык формы оплаты| На каком языке будет форма ввода данных для оплаты (на стороне банка). Возможны варианты ru/ro/en| ms2_payment_vcbmd_language |ru
-
+Страница успешной оплаты - id| Пользователь будет отправлен на эту страницу после завершения оплаты. Лучше указать id страницы корзины| ms2_payment_vcbmd_success_id | 1

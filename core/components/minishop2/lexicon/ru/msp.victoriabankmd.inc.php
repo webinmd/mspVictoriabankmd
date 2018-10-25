@@ -20,6 +20,3 @@ $_lang['setting_ms2_payment_vcbmd_language_desc'] = 'Укажите код яз�
 
 $_lang['setting_ms2_payment_vcbmd_success_id'] = 'Victoriabank: Страница успешной оплаты - id';
 $_lang['setting_ms2_payment_vcbmd_success_id_desc'] = 'Пользователь будет отправлен на эту страницу после завершения оплаты.';
-
-$_lang['setting_ms2_payment_vcbmd_failure_id'] = 'Victoriabank: Страница отказа от оплаты - id';
-$_lang['setting_ms2_payment_vcbmd_failure_id_desc'] = 'Пользователь будет отправлен на эту страницу при неудачной оплате.';

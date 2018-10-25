@@ -20,6 +20,3 @@ $_lang['setting_ms2_payment_vcbmd_language_desc'] = 'Victoriabank pay form langu
 
 $_lang['setting_ms2_payment_vcbmd_success_id'] = 'Victoriabank: Success page id';
 $_lang['setting_ms2_payment_vcbmd_success_id_desc'] = 'Redirect user after success payment';
-
-$_lang['setting_ms2_payment_vcbmd_failure_id'] = 'Victoriabank: Fail page id';
-$_lang['setting_ms2_payment_vcbmd_failure_id_desc'] = 'Redirect user after fail payment';

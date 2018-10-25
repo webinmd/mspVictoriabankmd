@@ -36,10 +36,6 @@ $tmp = array(
 		'xtype' => 'numberfield',
 		'value' => 1,
 	),
-	'failure_id' => array(
-		'xtype' => 'numberfield',
-		'value' => 1,
-	),
 );
 
 foreach ($tmp as $k => $v) {

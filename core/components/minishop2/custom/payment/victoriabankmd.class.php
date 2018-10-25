@@ -25,8 +25,7 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 			,'merch_name' => $this->modx->getOption('ms2_payment_vcbmd_merch_name', '', true)
 			,'currency' => $this->modx->getOption('ms2_payment_vcbmd_currency', '', true)
 			,'language' => $this->modx->getOption('ms2_payment_vcbmd_language', 'ru', true)
-			,'success_id' => $this->modx->getOption('ms2_payment_vcbmd_success_id', '1', true)
-			,'failure_id' => $this->modx->getOption('ms2_payment_vcbmd_failure_id', '1', true)
+			,'success_id' => $this->modx->getOption('ms2_payment_vcbmd_success_id', '1', true) 
 			,'email' => $this->modx->getOption('ms2_payment_vcbmd_email', $this->modx->getOption('emailsender'), true)
 		), $config);
 	}
