@@ -28,6 +28,10 @@ $tmp = array(
 		'xtype' => 'textfield',
 		'value' => '',
 	),
+	'merch_address' => array(
+		'xtype' => 'textfield',
+		'value' => '',
+	),
 	'language' => array(
 		'xtype' => 'textfield',
 		'value' => 'ru',

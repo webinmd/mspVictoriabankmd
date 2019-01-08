@@ -12,6 +12,9 @@ $_lang['setting_ms2_payment_vcbmd_terminal_id_desc'] = 'Provided by bank (or Car
 $_lang['setting_ms2_payment_vcbmd_merch_name'] = 'Victoriabank: Organization name';
 $_lang['setting_ms2_payment_vcbmd_merch_name_desc'] = '';
 
+$_lang['setting_ms2_payment_vcbmd_merch_address'] = 'Victoriabank: Organization address';
+$_lang['setting_ms2_payment_vcbmd_merch_address_desc'] = '';
+
 $_lang['setting_ms2_payment_vcbmd_currency'] = 'Victoriabank: Currency';
 $_lang['setting_ms2_payment_vcbmd_currency_desc'] = 'MDL, USD, EUR';
 

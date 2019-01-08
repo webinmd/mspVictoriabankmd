@@ -23,6 +23,7 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 			,'assets_url' => $assetsUrl
 			,'merch_url' => $this->modx->getOption('site_url')
 			,'merch_name' => $this->modx->getOption('ms2_payment_vcbmd_merch_name', '', true)
+			,'merch_address' => $this->modx->getOption('ms2_payment_vcbmd_merch_address', '', true)
 			,'currency' => $this->modx->getOption('ms2_payment_vcbmd_currency', '', true)
 			,'language' => $this->modx->getOption('ms2_payment_vcbmd_language', 'ru', true)
 			,'success_id' => $this->modx->getOption('ms2_payment_vcbmd_success_id', '1', true)
@@ -49,15 +50,28 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		$success_url	= $this->modx->makeUrl($this->config['success_id'], '', array('msorder'=>$id), 'full');
 		//$success_url 	= $this->modx->makeUrl($this->config['success_id'],'','',$this->config['protocol']);
 
+		$product_list = '';
+
+		$product_q = $this->modx->newQuery('msOrderProduct', array('order_id' => $id));
+		$product_q->limit(1000);
+
+		$product_q->prepare();
+		$product_q->stmt->execute();
+		$product_res = $product_q->stmt->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($product_res as $product) {
+			$product_list .= ' '.$product['msOrderProduct_name'].'.'; 
+		}
+
 		$request = array(
 			 'checkoutUrl' 	=> $this->config['checkoutUrl']
 			,'AMOUNT' 		=> $amount
 			,'CURRENCY' 	=> $this->config['currency']
 			,'ORDER' 		=> '00000'.$id
-			,'DESC' 		=> 'Payment #'.$id
+			,'DESC' 		=> 'Payment #'.$id.': '.$product_list
 			,'MERCH_NAME' 	=> $this->config['merch_name']
 			,'MERCH_URL'	=> $this->config['merch_url']
-			,'MERCHANT' 	=> $this->config['merchant_id']			
+			,'MERCHANT' 	=> $this->config['merchant_id']		
+			,'MERCH_ADDRESS'=> 	$this->config['merch_address']	
 			,'TERMINAL' 	=> $this->config['terminal_id']	
 			,'EMAIL' 		=> $order->getOne('UserProfile')->get('email')
 			,'TRTYPE' 		=> $trtType

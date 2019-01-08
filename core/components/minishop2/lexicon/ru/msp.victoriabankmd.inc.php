@@ -12,6 +12,9 @@ $_lang['setting_ms2_payment_vcbmd_terminal_id_desc'] = 'Выдается бан�
 $_lang['setting_ms2_payment_vcbmd_merch_name'] = 'Victoriabank: Имя организации продавца';
 $_lang['setting_ms2_payment_vcbmd_merch_name_desc'] = 'Юридическое наименование организации продавца';
 
+$_lang['setting_ms2_payment_vcbmd_merch_address'] = 'Victoriabank: Юридический адрес вашей компании';
+$_lang['setting_ms2_payment_vcbmd_merch_address_desc'] = '';
+
 $_lang['setting_ms2_payment_vcbmd_currency'] = 'Victoriabank: Валюта платежа';
 $_lang['setting_ms2_payment_vcbmd_currency_desc'] = 'Трехбуквыннй код валюты (MDL, USD, EUR)';
 
