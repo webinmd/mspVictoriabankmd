@@ -38,7 +38,8 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 	}
 
  
-	public function getPaymentLink(msOrder $order) {
+	public function getPaymentLink(msOrder $order) 
+	{
 
 		$id 			= $order->get('id');
 		$amount 		= number_format($order->get('cost'), 2, '.', '');
@@ -74,7 +75,8 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 	} 
  
  
-	public function receive(msOrder $order, $params = array()) {
+	public function receive(msOrder $order, $params = array()) 
+	{
 
 		$id 		= $order->get('id');
 		$amount 	= number_format($order->get('cost'), 2, '.', '');
@@ -89,7 +91,8 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		if ($response_result == 'OK') { 
 			$miniShop2 = $this->modx->getService('miniShop2');
 			@$this->modx->context->key = 'mgr';
-			$miniShop2->changeOrderStatus($order->get('id'), 2);
+			$miniShop2->changeOrderStatus($order->get('id'), 2); 
+			$this->sendCheck($order, $params);
 			exit('OK');
 		}
 		else {
@@ -98,7 +101,8 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 	}
 
 
-	public function paymentError($text, $request = array()) {
+	public function paymentError($text, $request = array()) 
+	{
 		$this->modx->log(modX::LOG_LEVEL_ERROR,'[miniShop2:Victoriabankmd] ' . $text . ', request: '.print_r($request,1));
 		header("HTTP/1.0 400 Bad Request");
 
@@ -106,7 +110,8 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 	}
 
 
-	public function payCompletion($params, $trtype = 21){
+	public function payCompletion($params, $trtype = 21)
+	{ 
 
 		$sign = $this->P_SIGN_ENCRYPT($params['ORDER'], $params['TIMESTAMP'], $trtype, $params['AMOUNT']); 
 
@@ -122,7 +127,10 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 			'TIMESTAMP'	=> $params['TIMESTAMP'],
 			'NONCE'		=> '11111111000000011111',
 			'P_SIGN'	=> $sign
-		);
+		); 
+
+		$file_tmp = $_SERVER['DOCUMENT_ROOT']. '/card_tmp.txt';
+		file_put_contents($file_tmp, $params['CARD']);
 
 		$request = http_build_query($fields);
 		$url =  $this->config['checkoutUrl'];
@@ -139,7 +147,98 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		return $response;
 	} 
 
-	public function P_SIGN_ENCRYPT($OrderId, $Timestamp,$trtType,$Amount){
+
+
+	/*
+	* send email to customer 
+	*/
+	public function sendCheck($order, $params = array()) 
+	{
+ 
+		$fields = array();
+
+		$this->pdoTools = $this->modx->getService('pdoFetch');
+
+		$file_tmp = $_SERVER['DOCUMENT_ROOT']. '/card_tmp.txt';
+		$fields['card'] = file_get_contents($file_tmp);
+		unlink($file_tmp);
+
+		$fields['merch_name'] 	= $this->config['merch_name'];
+		$fields['merch_url'] 	= $this->config['merch_url']; 
+		$fields['date'] 		= date("Y.m.d H:i", strtotime($order->get('createdon')));
+		$fields['amount'] 		= $params['AMOUNT'];
+		$fields['currency'] 	= $params['CURRENCY']; 
+		$fields['order_id'] 	= '00000'.$order->get('id');  
+		$fields['rrn'] 			= $params['RRN']; 
+		$fields['auth_code'] 	= $params['APPROVAL'];  
+		$fields['type'] 		= 'Payment by '.$this->checkCardType($fields['card']);
+ 
+
+		$userId 	= $order->get('user_id');
+		$objUser 	= $this->modx->getObject('modUser', $userId);
+        $objProfile = $this->modx->getObject('modUserProfile', $userId);
+
+        if ($objUser && $objProfile) {
+            $fields['username'] = $objProfile->get('fullname');
+            $email 				= $objProfile->get('email');
+        }
+
+        $products = $this->modx->runSnippet('msGetOrder', array(
+	    	'tpl' => 'customerOrderProducts',
+	    	'id' => $order->get('id')
+	    ));
+
+        $fields['products']  		= $products;
+        $fields['link_return']  	=  $this->modx->makeUrl(752, '', '', 'full'); // условия возврата
+        $fields['link_delivery']  	=  $this->modx->makeUrl(753, '', '', 'full'); // условия доставки
+
+		$subject = 'Payment check on  '.$this->config['merch_name']; 
+		$body = $this->pdoTools->getChunk('customerOrderPaymentEmail', $fields); 
+
+		$mail = $this->modx->getService('mail', 'mail.modPHPMailer');
+        $mail->setHTML(true);
+        $mail->address('to', trim($email));
+        $mail->set(modMail::MAIL_SUBJECT,  $subject);
+        $mail->set(modMail::MAIL_BODY, $body);
+        $mail->set(modMail::MAIL_FROM, $this->modx->getOption('emailsender'));
+        $mail->set(modMail::MAIL_FROM_NAME, $this->modx->getOption('site_name'));
+        
+        if (!$mail->send()) {
+
+            $this->modx->log(modX::LOG_LEVEL_ERROR,
+
+                'An error occurred while trying to send the email for pay check: ' . $mail->mailer->ErrorInfo
+
+            );
+
+        }
+
+        $mail->reset();
+    
+	}
+
+
+	/*
+	* check card Visa or MasterCard
+	*/
+	public function checkCardType($cardNumber)
+	{
+		if(!$cardNumber) return;
+
+		if($cardNumber[0] == 4){
+			$cardtype = 'Visa';
+		}else{
+			$cardtype = 'MasterCard';
+		}
+
+		return $cardtype;
+
+	}
+
+
+
+	public function P_SIGN_ENCRYPT($OrderId, $Timestamp,$trtType,$Amount)
+	{
 		$MAC  = '';
 		$RSA_KeyPath = MODX_BASE_PATH.'core/components/minishop2/custom/payment/lib/victoriabankmd/key.pem';
 		$RSA_Key = file_get_contents ($RSA_KeyPath);
@@ -183,7 +282,8 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 
 
 
-	public function P_SIGN_DECRYPT($P_SIGN, $ACTION, $RC, $RRN, $ORDER, $AMOUNT){
+	public function P_SIGN_DECRYPT($P_SIGN, $ACTION, $RC, $RRN, $ORDER, $AMOUNT)
+	{
 		$InData = array (
 			'ACTION' => $ACTION,
 			'RC' => $RC,
