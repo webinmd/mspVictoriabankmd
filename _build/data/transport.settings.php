@@ -39,11 +39,16 @@ $tmp = array(
 	'success_id' => array(
 		'xtype' => 'numberfield',
 		'value' => 1,
+	),	
+	'failure_id' => array(
+		'xtype' => 'numberfield',
+		'value' => 1,
 	),
 	'merch_gmt' => array(
 		'xtype' => 'numberfield',
 		'value' => 2,
 	),
+	 
 );
 
 foreach ($tmp as $k => $v) {
