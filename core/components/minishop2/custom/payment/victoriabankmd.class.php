@@ -17,7 +17,7 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 
 		$this->config = array_merge(array(
 			'paymentUrl' => $paymentUrl
-			,'checkoutUrl' => $this->modx->getOption('ms2_payment_vcbmd_url', null, 'https://egateway.victoriabank.md/cgi-bin/cgi_link', true)
+			,'checkoutUrl' => $this->modx->getOption('ms2_payment_vcbmd_url', null, 'https://ecomt.victoriabank.md/cgi-bin/cgi_link', true)
 			,'terminal_id' => $this->modx->getOption('ms2_payment_vcbmd_terminal_id')
 			,'merchant_id' => $this->modx->getOption('ms2_payment_vcbmd_merchant_id')
 			,'assets_url' => $assetsUrl
