@@ -116,3 +116,6 @@ MERCHANT| Выдается банком |ms2_payment_vcbmd_merchant_id| -
 
 1. Иконки платежных систем (Visa/MasterCard)
 2. Письмо Заказчику после оплаты с данными оплаты
+
+#### ВАЖНО 
+Не забываем создать чанк customerOrderPaymentEmail - это чек покупателю
