@@ -185,6 +185,7 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 		$fields['order_id'] 	= '00000'.$order->get('id');  
 		$fields['rrn'] 			= $params['RRN']; 
 		$fields['auth_code'] 	= $params['APPROVAL'];  
+		$fields['delivery'] 	= $order->get('delivery');  
 		$fields['type'] 		= 'Payment by '.$this->checkCardType($fields['card']);
  
 
@@ -197,12 +198,19 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
             $email 				= $objProfile->get('email');
         }
 
-        $products = $this->modx->runSnippet('msGetOrder', array(
-	    	'tpl' => 'customerOrderProducts',
-	    	'id' => $order->get('id')
-	    ));
-
-        $fields['products']  		= $products;
+        $productNames = [];
+        $products = $order->getMany('Products');
+        foreach ($products as $item) {
+            /** @var msProduct $product */
+            $name = $item->get('name');
+            if (empty($name) && $product = $item->getOne('Product')) {
+                $name = $product->get('pagetitle');
+            } 
+            
+            $productNames[] = $name;
+        }
+		
+        $fields['products'] = implode(",", $productNames); 
         $fields['link_return']  	=  $this->modx->makeUrl(752, '', '', 'full'); // условия возврата
         $fields['link_delivery']  	=  $this->modx->makeUrl(753, '', '', 'full'); // условия доставки
 
