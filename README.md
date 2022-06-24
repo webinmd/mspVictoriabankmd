@@ -1,9 +1,10 @@
 ## mspVictoriabankmd
 *(Компонент предоставляется "как есть" и автор не несёт какой-либо ответственности за "у меня не работает")*
 
-###ВНИМАНИЕ 
+### ВНИМАНИЕ 
 Терминал банка обычно активируется на следующий день
 
+------------
 
 
 Card payment method by [Victoriabank.md](http://www.victoriabank.md/) (Moldova) for miniShop2
