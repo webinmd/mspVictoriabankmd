@@ -14,7 +14,7 @@ Card payment method by [Victoriabank.md](http://www.victoriabank.md/) (Moldova) 
 ```openssl genrsa -f4 -out key.pem 2048```
 
 * Этот ключ, после установки модуля, поместить в папку
- ```components/minishop2/custom/payment/lib/victoriabankmd/```
+ ```core/components/minishop2/custom/payment/lib/victoriabankmd/```
 
 **Там же должен уже лежить публичный ключ от банка victoria_pub.pem**
 
