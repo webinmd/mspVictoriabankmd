@@ -7,8 +7,8 @@ $modx->setLogLevel(modX::LOG_LEVEL_ERROR);
 $modx->setLogTarget('FILE'); 
 
 
-if($_GET['checkoutUrl']){
-
+if($_GET['checkoutUrl']){ 
+ 	 
 	$form = '';
 
 	$form .= "<body onload='document.payform.submit()'>";
@@ -19,18 +19,20 @@ if($_GET['checkoutUrl']){
 		if($key != 'checkoutUrl') $form .= "<input type='hidden' name='".$key."' value='".$value."'>";
 	}
 
-	$form .= "</form></body>";
+	$form .= "</form></body>"; 
 
 	echo $form;
+ 
 
 }else{
+
+ 	//$modx->log(modX::LOG_LEVEL_ERROR, '[miniShop2:Victoriabankmd] $_REQUEST  '.print_r($_REQUEST, true));
 
 	/* @var miniShop2 $miniShop2 */
 	$miniShop2 = $modx->getService('minishop2');
 	$miniShop2->loadCustomClasses('payment');
 
-	if (!class_exists('Victoriabankmd')) {exit('Error: could not load payment class "Victoriabankmd".');}
- 	 
+	if (!class_exists('Victoriabankmd')) {exit('Error: could not load payment class "Victoriabankmd".');}	 
 
 	$context = '';
 	$params = array();
@@ -80,7 +82,7 @@ if($_GET['checkoutUrl']){
 
 
 	if(!$istest1 && !$istest2 && !$istest3){
-
+	    
 		// start real shop work 
 
 		if($_REQUEST['TRTYPE'] == 0 &&  $_REQUEST['TEXT']=='Approved'){		
@@ -92,12 +94,43 @@ if($_GET['checkoutUrl']){
 			$order_id =  substr($_REQUEST['ORDER'], 5);
 
 			if ($order = $modx->getObject('msOrder', $order_id)) {  
-				$handler->receive($order, $_REQUEST);
+				$handler->receive($order, $_REQUEST); 
 			}
 			else {
 				$modx->log(modX::LOG_LEVEL_ERROR, '[miniShop2:Victoriabankmd] Could not retrieve order with id '.$_REQUEST['ORDER']);
 			}
 		}	
+		
+		
+		
+		// redirect  
+		
+		if($_GET['msorder']) {
+		    
+		    $params['msorder'] = (int)$_GET['msorder'];
+	    
+		    if ($order = $modx->getObject('msOrder', array('id' => $params['msorder']))) {
+			$context = $order->get('context');
+			$status = $order->get('status');
+		    } 
+
+			$success = $cancel = $modx->getOption('site_url');
+		    if ($id = $modx->getOption('ms2_payment_vcbmd_success_id', null, 0)) {
+			$success = $modx->makeUrl($id, $context, $params, 'full');
+		    }
+		    if ($id = $modx->getOption('ms2_payment_vcbmd_failure_id', null, 0)) {
+			$cancel = $modx->makeUrl($id, $context, $params, 'full');
+		    }
+
+		    if($status == 2) {
+			$redirect = $success;
+		    } else {
+			$redirect = $cancel;
+		    }
+
+		    $modx->sendRedirect($redirect);
+		} 
+		     
 	}
  
 }
