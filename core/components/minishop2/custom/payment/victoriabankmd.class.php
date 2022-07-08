@@ -179,63 +179,69 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 
 		$fields['merch_name'] 	= $this->config['merch_name'];
 		$fields['merch_url'] 	= $this->config['merch_url']; 
-		$fields['date'] 		= date("Y.m.d H:i", strtotime($order->get('createdon')));
-		$fields['amount'] 		= $params['AMOUNT'];
+		$fields['date'] 	= date("Y.m.d H:i", strtotime($order->get('createdon')));
+		$fields['amount'] 	= $params['AMOUNT'];
 		$fields['currency'] 	= $params['CURRENCY']; 
 		$fields['order_id'] 	= '00000'.$order->get('id');  
 		$fields['rrn'] 			= $params['RRN']; 
 		$fields['auth_code'] 	= $params['APPROVAL'];  
 		$fields['delivery'] 	= $order->get('delivery');  
-		$fields['type'] 		= 'Payment by '.$this->checkCardType($fields['card']);
+		$fields['type'] 	= 'Payment by '.$this->checkCardType($fields['card']);
  
 
 		$userId 	= $order->get('user_id');
 		$objUser 	= $this->modx->getObject('modUser', $userId);
-        $objProfile = $this->modx->getObject('modUserProfile', $userId);
-
-        if ($objUser && $objProfile) {
-            $fields['username'] = $objProfile->get('fullname');
-            $email 				= $objProfile->get('email');
-        }
-
-        $productNames = [];
-        $products = $order->getMany('Products');
-        foreach ($products as $item) {
-            /** @var msProduct $product */
-            $name = $item->get('name');
-            if (empty($name) && $product = $item->getOne('Product')) {
-                $name = $product->get('pagetitle');
-            } 
-            
-            $productNames[] = $name;
-        }
+        	$objProfile 	= $this->modx->getObject('modUserProfile', ['internalKey' => $userId]);
 		
-        $fields['products'] = implode(",", $productNames); 
-        $fields['link_return']  	=  $this->modx->makeUrl(752, '', '', 'full'); // условия возврата
-        $fields['link_delivery']  	=  $this->modx->makeUrl(753, '', '', 'full'); // условия доставки
+		$email = $order->Address->get('email'); 
+      
+		if ($objUser && $objProfile) {
+		    $fields['username'] = $objProfile->get('fullname');
+
+		    if(!$email) {
+			$email = $objProfile->get('email');
+		    }
+		}
+        
+
+		$productNames = [];
+		$products = $order->getMany('Products');
+		foreach ($products as $item) {
+		    /** @var msProduct $product */
+		    $name = $item->get('name');
+		    if (empty($name) && $product = $item->getOne('Product')) {
+			$name = $product->get('pagetitle');
+		    } 
+
+		    $productNames[] = $name;
+		}
+
+		$fields['products'] = implode(",", $productNames); 
+		$fields['link_return']  	=  $this->modx->makeUrl(752, '', '', 'full'); // условия возврата
+		$fields['link_delivery']  	=  $this->modx->makeUrl(753, '', '', 'full'); // условия доставки
 
 		$subject = 'Payment check on  '.$this->config['merch_name']; 
 		$body = $this->pdoTools->getChunk('customerOrderPaymentEmail', $fields); 
 
 		$mail = $this->modx->getService('mail', 'mail.modPHPMailer');
-        $mail->setHTML(true);
-        $mail->address('to', trim($email));
-        $mail->set(modMail::MAIL_SUBJECT,  $subject);
-        $mail->set(modMail::MAIL_BODY, $body);
-        $mail->set(modMail::MAIL_FROM, $this->modx->getOption('emailsender'));
-        $mail->set(modMail::MAIL_FROM_NAME, $this->modx->getOption('site_name'));
-        
-        if (!$mail->send()) {
+		$mail->setHTML(true);
+		$mail->address('to', trim($email));
+		$mail->set(modMail::MAIL_SUBJECT,  $subject);
+		$mail->set(modMail::MAIL_BODY, $body);
+		$mail->set(modMail::MAIL_FROM, $this->modx->getOption('emailsender'));
+		$mail->set(modMail::MAIL_FROM_NAME, $this->modx->getOption('site_name'));
 
-            $this->modx->log(modX::LOG_LEVEL_ERROR,
+		if (!$mail->send()) {
 
-                'An error occurred while trying to send the email for pay check: ' . $mail->mailer->ErrorInfo
+		    $this->modx->log(modX::LOG_LEVEL_ERROR,
 
-            );
+			'An error occurred while trying to send the email for pay check: ' . $mail->mailer->ErrorInfo
 
-        }
+		    );
 
-        $mail->reset();
+		}
+
+		$mail->reset();
     
 	}
 
