@@ -105,11 +105,11 @@ if($_GET['checkoutUrl']){
 		
 		// redirect  
 		
-		if($_GET['msorder']) {
+		if($_REQUEST['msorder']) {
 		    
-		    $params['msorder'] = (int)$_GET['msorder'];
+		    $params['msorder'] = (int)$_REQUEST['msorder'];
 	    
-		    if ($order = $modx->getObject('msOrder', array('id' => $params['msorder']))) {
+		    if ($order = $modx->getObject('msOrder', $params['msorder'])) {
 			$context = $order->get('context');
 			$status = $order->get('status');
 		    } 
