@@ -43,8 +43,9 @@ class Victoriabankmd extends msPaymentHandler implements msPaymentInterface {
 	{
 
 		$id 			= $order->get('id');
-		$amount 		= number_format($order->get('cost'), 2, '.', '');
-		$timestamp 		= date("YmdHis", (strtotime($order->get('createdon')) - 3600*3)); // - 3 hours
+		$amount 		= number_format($order->get('cost'), 2, '.', '');		
+		$merch_gmt      	= date('Z');
+		$timestamp 		= date("YmdHis", (strtotime($order->get('createdon')) - ($merch_gmt + 3600))); // - UTC hours
 		$trtType 		= 0;
 		$sign 			= $this->P_SIGN_ENCRYPT('00000'.$id, $timestamp, $trtType, $amount); 	 
 		$success_url	= $this->modx->makeUrl($this->config['success_id'], '', array('msorder'=>$id), 'full');
